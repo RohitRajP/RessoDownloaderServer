@@ -16,7 +16,11 @@ const getHTMLContent = async (songId) => {
 
     // launching browser instance
     const browser = await puppeteer.launch({
-        headless: true
+        headless: true,
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+        ],
     });
     // opening new tab in browser
     const page = await browser.newPage();

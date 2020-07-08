@@ -58,9 +58,14 @@ const fetchContentFromHTML = (htmlContent) => {
     const streamingUrlHTML = $('body').find('#--mplayer--').html().toString();
     const streamingUrl = streamingUrlHTML.substring(streamingUrlHTML.indexOf("https"), streamingUrlHTML.indexOf(">") - 1);
 
+    // fetching the audio video
+    const audioVideoHTML = $('.video-area').html().toString();
+    const audioVideoUrl = audioVideoHTML.substring(audioVideoHTML.indexOf("src=") + 4, audioVideoHTML.indexOf(" loop") - 1);
+
     // returning data
     return {
-        streamingUrl: streamingUrl
+        streamingUrl: streamingUrl,
+        audioVideoUrl: audioVideoUrl
     };
 
 

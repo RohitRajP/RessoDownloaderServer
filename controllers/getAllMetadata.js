@@ -1,6 +1,10 @@
 // importing models
 const puppeteer = require("puppeteer")
 const cheerio = require("cheerio");
+const fs = require("fs");
+const {
+    log
+} = require("console");
 
 // used to show console logs
 const showLog = (message) => {
@@ -12,7 +16,7 @@ const getHTMLContent = async (songId) => {
 
     // launching browser instance
     const browser = await puppeteer.launch({
-        headless: false
+        headless: true
     });
     // opening new tab in browser
     const page = await browser.newPage();
@@ -32,6 +36,36 @@ const getHTMLContent = async (songId) => {
 
 };
 
+// used to write the data into a html file for observations
+const writeHTMLToFile = (htmlContent) => {
+
+    fs.writeFile("./observation.html", htmlContent, function (err) {
+        if (err) {
+            return console.log("FileWriteError: " + err);
+        }
+        showLog("HTML content written to file");
+    });
+
+};
+
+// parses the html and fetches required content
+const fetchContentFromHTML = (htmlContent) => {
+
+    // loading data into cheerio
+    const $ = cheerio.load(htmlContent);
+
+    // fetching the audio streaming url
+    const streamingUrlHTML = $('body').find('#--mplayer--').html().toString();
+    const streamingUrl = streamingUrlHTML.substring(streamingUrlHTML.indexOf("https"), streamingUrlHTML.indexOf(">") - 1);
+
+    // returning data
+    return {
+        streamingUrl: streamingUrl
+    };
+
+
+};
+
 // method to get all fetchable song data from the resso app
 module.exports.getAllMetadataFun = async (req, res) => {
 
@@ -44,12 +78,19 @@ module.exports.getAllMetadataFun = async (req, res) => {
         // getting html content of the page
         const htmlContent = await getHTMLContent(songId);
         showLog("Got HTML Content");
-        
+        //writeHTMLToFile(htmlContent);
 
         // sending data to cheerio to be processed
+        const reqContent = fetchContentFromHTML(htmlContent);
 
+        // sending respose with content
+        res.send({
+            status: true,
+            data: reqContent
+        });
 
     } catch (error) {
+        console.log("Error Occurred: " + error);
         res.send({
             status: false,
             error: error

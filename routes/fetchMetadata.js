@@ -8,7 +8,7 @@ const router = express.Router();
 const getAllMetadata = require("../controllers/getAllMetadata");
 
 // setting router instances
-router.get("/getallmetadata", getAllMetadata.getAllMetadataFun);
+router.get("/getallmetadata/:songId", getAllMetadata.getAllMetadataFun);
 
 // exporting router
 module.exports = router;

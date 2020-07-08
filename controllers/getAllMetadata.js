@@ -60,14 +60,22 @@ const fetchContentFromHTML = (htmlContent) => {
 
     // fetching the audio video
     const audioVideoHTML = $('.video-area').html().toString();
-    const audioVideoUrl = audioVideoHTML.substring(audioVideoHTML.indexOf("src=") + 4, audioVideoHTML.indexOf(" loop") - 1);
+    let audioVideoUrl = "";
+    let isImage = false;
+    // seeing if visual content is a video or image
+    if (audioVideoHTML.includes("<video"))
+        audioVideoUrl = audioVideoHTML.substring(audioVideoHTML.indexOf("src=") + 5, audioVideoHTML.indexOf(" loop") - 1);
+    else {
+        isImage = true;
+        audioVideoUrl = audioVideoHTML.substring(audioVideoHTML.indexOf("https"), audioVideoHTML.indexOf(".jpg") + 4);
+    }
 
     // returning data
     return {
         streamingUrl: streamingUrl,
-        audioVideoUrl: audioVideoUrl
+        audioVideoUrl: audioVideoUrl,
+        isImage: isImage
     };
-
 
 };
 
@@ -83,7 +91,7 @@ module.exports.getAllMetadataFun = async (req, res) => {
         // getting html content of the page
         const htmlContent = await getHTMLContent(songId);
         showLog("Got HTML Content");
-        //writeHTMLToFile(htmlContent);
+        writeHTMLToFile(htmlContent);
 
         // sending data to cheerio to be processed
         const reqContent = fetchContentFromHTML(htmlContent);

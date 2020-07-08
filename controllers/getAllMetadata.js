@@ -76,8 +76,8 @@ const fetchContentFromHTML = (htmlContent) => {
 
     // returning data
     return {
-        streamingUrl: streamingUrl,
-        audioVideoUrl: audioVideoUrl,
+        audio: streamingUrl,
+        visual: audioVideoUrl,
         isImage: isImage
     };
 
@@ -95,7 +95,7 @@ module.exports.getAllMetadataFun = async (req, res) => {
         // getting html content of the page
         const htmlContent = await getHTMLContent(songId);
         showLog("Got HTML Content");
-        writeHTMLToFile(htmlContent);
+        //writeHTMLToFile(htmlContent);
 
         // sending data to cheerio to be processed
         const reqContent = fetchContentFromHTML(htmlContent);
